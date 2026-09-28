@@ -1,0 +1,9 @@
+# .gitignore
+node_modules
+.env
+generated
+*.db
+.agents/
+.claude/
+.windsurf/
+skills-lock.json

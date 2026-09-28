@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Status {
+  PENDENTE
+  CONCLUIDA
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  nome     String
+  email    String   @unique
+  password String
+  role     Role     @default(USER)
+  tarefas  Tarefa[]
+}
+
+model Tarefa {
+  id      Int    @id @default(autoincrement())
+  titulo  String
+  status  Status @default(PENDENTE)
+  userId  Int
+  dono    User   @relation(fields: [userId], references: [id])
+}

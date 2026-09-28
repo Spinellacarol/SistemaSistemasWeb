@@ -1,0 +1,23 @@
+### T1 - Cadastro válido (201)
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{ "nome": "Ana", "email": "ana@tarefas.com", "password": "123456" }
+
+### T2 - E-mail repetido (409)
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{ "nome": "Ana", "email": "ana@tarefas.com", "password": "123456" }
+
+### Login OK (200) - guardem o token
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{ "email": "ana@tarefas.com", "password": "123456" }
+
+### T3 - Senha errada (401)
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{ "email": "ana@tarefas.com", "password": "errada" }
