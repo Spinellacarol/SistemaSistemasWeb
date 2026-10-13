@@ -2,22 +2,103 @@
 POST http://localhost:3000/auth/register
 Content-Type: application/json
 
-{ "nome": "Ana", "email": "ana@tarefas.com", "password": "123456" }
+{ "nome": "Carlos", "email": "carlos@tarefas.com", "password": "123456" }
 
 ### T2 - E-mail repetido (409)
 POST http://localhost:3000/auth/register
 Content-Type: application/json
 
-{ "nome": "Ana", "email": "ana@tarefas.com", "password": "123456" }
+{ "nome": "Carlos", "email": "carlos@tarefas.com", "password": "123456" }
 
-### Login OK (200) - guardem o token
+### Login ADMIN (200)
+# @name loginAdmin
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{ "email": "admin@tarefas.com", "password": "123456" }
+
+### Login Ana (200)
+# @name loginAna
 POST http://localhost:3000/auth/login
 Content-Type: application/json
 
 { "email": "ana@tarefas.com", "password": "123456" }
 
-### T3 - Senha errada (401)
+### Login Bruno (200)
+# @name loginBruno
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{ "email": "bruno@tarefas.com", "password": "123456" }
+
+### T3 - Login com senha errada (401)
 POST http://localhost:3000/auth/login
 Content-Type: application/json
 
 { "email": "ana@tarefas.com", "password": "errada" }
+
+### T4 - Rota protegida sem token (401)
+GET http://localhost:3000/auth/me
+
+### Token com formato errado (401)
+GET http://localhost:3000/auth/me
+Authorization: {{loginAna.response.body.token}}
+
+### Token adulterado (401)
+GET http://localhost:3000/auth/me
+Authorization: Bearer {{loginAna.response.body.token}}x
+
+### T5 - Rota protegida com token válido (200)
+GET http://localhost:3000/auth/me
+Authorization: Bearer {{loginAna.response.body.token}}
+
+### T6 - Ana cria tarefa mandando outro dono no body (201, dono = Ana)
+# @name tarefaAna
+POST http://localhost:3000/tarefas
+Content-Type: application/json
+Authorization: Bearer {{loginAna.response.body.token}}
+
+{ "titulo": "Tarefa da Ana", "userId": 999 }
+
+### T7 - Bruno altera tarefa da Ana (403)
+PUT http://localhost:3000/tarefas/{{tarefaAna.response.body.id}}
+Content-Type: application/json
+Authorization: Bearer {{loginBruno.response.body.token}}
+
+{ "status": "CONCLUIDA" }
+
+### Ana altera a própria tarefa (200)
+PUT http://localhost:3000/tarefas/{{tarefaAna.response.body.id}}
+Content-Type: application/json
+Authorization: Bearer {{loginAna.response.body.token}}
+
+{ "status": "CONCLUIDA" }
+
+### ADMIN altera tarefa da Ana (200)
+PUT http://localhost:3000/tarefas/{{tarefaAna.response.body.id}}
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.token}}
+
+{ "titulo": "Editada pelo admin" }
+
+### T8 - USER em rota de ADMIN (403)
+GET http://localhost:3000/users
+Authorization: Bearer {{loginAna.response.body.token}}
+
+### T9 - ADMIN em rota de ADMIN (200)
+GET http://localhost:3000/users
+Authorization: Bearer {{loginAdmin.response.body.token}}
+
+### ADMIN altera role com valor inválido (400)
+PATCH http://localhost:3000/users/2/role
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.token}}
+
+{ "role": "SUPERUSER" }
+
+### T10 - Recurso inexistente (404)
+PUT http://localhost:3000/tarefas/99999
+Content-Type: application/json
+Authorization: Bearer {{loginAna.response.body.token}}
+
+{ "status": "CONCLUIDA" }

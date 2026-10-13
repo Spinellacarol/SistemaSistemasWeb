@@ -51,3 +51,8 @@ export async function login(req, res) {
   const { password: _, ...userSemSenha } = user;
   return res.status(200).json({ token, user: userSemSenha });
 }
+
+export async function me(req, res) {
+  const user = await prisma.user.findUnique({ where: { id: req.usuario.id } });
+  return res.status(200).json(user);
+}
