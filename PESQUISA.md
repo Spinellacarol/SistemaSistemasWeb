@@ -273,8 +273,6 @@ Quando o login falha, o sistema deve responder com uma mensagem genérica, como 
 
 **O nosso projeto segue essas recomendações?**
 
-<!-- REESCREVER com suas palavras antes de entregar -->
-
 **Recomendação 1 (guardar a senha com hash):** sim, nosso projeto segue. No cadastro (`register`), a senha nunca é salva como foi digitada: ela passa por `bcrypt.hash(password, 10)`, que é um algoritmo de senhas, com custo 10 e salt aleatório automatico. O seed também usa bcrypt, por isso o Admin, a Ana e o Bruno possuem a mesma senha, mas hashes diferentes no banco. Além disso, a senha não aparece nas respostas da API, já que o Prisma foi configurado com `omit`.
 
 **Recomendação 2 (mensagem genérica no login):** sim, o nosso projeto segue. No `login`, tanto o e-mail que não existe quanto a senha errada devolvem a resposta 401 com a mensagem "Credenciais inválidas". Para que quem tentar entrar não descubra qual dos dois estava errado.
