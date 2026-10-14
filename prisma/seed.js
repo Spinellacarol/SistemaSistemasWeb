@@ -1,22 +1,35 @@
 import bcrypt from "bcryptjs";
 import { prisma } from "../src/lib/prisma.js";
 
-const hash = await bcrypt.hash("123456", 10);
+const SENHA = "123456";
 
 await prisma.user.upsert({
   where: { email: "admin@tarefas.com" },
   update: {},
-  create: { nome: "Admin", email: "admin@tarefas.com", password: hash, role: "ADMIN" },
+  create: {
+    nome: "Admin",
+    email: "admin@tarefas.com",
+    password: await bcrypt.hash(SENHA, 10),
+    role: "ADMIN",
+  },
 });
 const ana = await prisma.user.upsert({
   where: { email: "ana@tarefas.com" },
   update: {},
-  create: { nome: "Ana", email: "ana@tarefas.com", password: hash },
+  create: {
+    nome: "Ana",
+    email: "ana@tarefas.com",
+    password: await bcrypt.hash(SENHA, 10),
+  },
 });
 const bruno = await prisma.user.upsert({
   where: { email: "bruno@tarefas.com" },
   update: {},
-  create: { nome: "Bruno", email: "bruno@tarefas.com", password: hash },
+  create: {
+    nome: "Bruno",
+    email: "bruno@tarefas.com",
+    password: await bcrypt.hash(SENHA, 10),
+  },
 });
 
 await prisma.tarefa.deleteMany(); // evita duplicar se rodar o seed duas vezes
